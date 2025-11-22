@@ -1,0 +1,4 @@
+UI Guidelines:
+1. Error messages must be Red.
+2. Success messages must be Green.
+3. The Pay Now button should disappear on success.
