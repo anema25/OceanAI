@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechGear Checkout</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f9; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; }
+        h1, h2 { color: #333; }
+        .item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .section { margin-bottom: 20px; padding: 15px; background: #fafafa; border-radius: 5px; }
+        label { display: block; margin-top: 10px; font-weight: 500; }
+        input[type="text"], input[type="email"] { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ddd; }
+        .error { color: red; font-size: 0.85em; display: none; }
+        #total-price { font-size: 1.5em; font-weight: bold; color: #28a745; }
+        #pay-btn { width: 100%; padding: 15px; background-color: #28a745; color: white; border: none; font-size: 1.2em; cursor: pointer; margin-top: 20px; }
+        #pay-btn:hover { background-color: #218838; }
+        #success-msg { display: none; text-align: center; color: green; font-size: 1.5em; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>TechGear Checkout</h1>
+
+    <div class="section" id="cart-section">
+        <h2>Your Cart</h2>
+        <div class="item">
+            <span>Wireless Headphones ($100)</span>
+            <input type="number" id="qty-1" value="1" min="1" style="width: 50px;" onchange="updateTotal()">
+        </div>
+        
+        <div style="margin-top: 15px;">
+            <label>Discount Code:</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="discount-code" placeholder="Enter code">
+                <button id="apply-discount-btn" onclick="applyDiscount()">Apply</button>
+            </div>
+            <small id="discount-msg"></small>
+        </div>
+
+        <hr>
+        <div style="text-align: right;">
+            Total: $<span id="total-price">100</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Shipping Details</h2>
+        <label>Full Name</label>
+        <input type="text" id="full-name">
+        <span class="error" id="error-name">Name is required</span>
+
+        <label>Email Address</label>
+        <input type="email" id="email">
+        <span class="error" id="error-email">Invalid email address</span>
+        
+        <label>Shipping Method</label>
+        <div>
+            <input type="radio" name="shipping" id="ship-standard" value="0" checked onchange="updateTotal()"> Standard (Free)
+            <input type="radio" name="shipping" id="ship-express" value="10" onchange="updateTotal()"> Express (+$10)
+        </div>
+    </div>
+
+    <button id="pay-btn" onclick="processPayment()">Pay Now</button>
+    <div id="success-msg">Payment Successful!</div>
+</div>
+
+<script>
+    let discountApplied = 0;
+
+    function applyDiscount() {
+        const code = document.getElementById('discount-code').value;
+        const msg = document.getElementById('discount-msg');
+        
+        if (code === 'SAVE15') {
+            discountApplied = 0.15;
+            msg.style.color = 'green';
+            msg.innerText = '15% Discount Applied!';
+        } else {
+            discountApplied = 0;
+            msg.style.color = 'red';
+            msg.innerText = 'Invalid Code';
+        }
+        updateTotal();
+    }
+
+    function updateTotal() {
+        const p1 = 100 * parseInt(document.getElementById('qty-1').value || 0);
+        let subtotal = p1;
+        const shipping = document.querySelector('input[name="shipping"]:checked').value;
+        
+        if (discountApplied > 0) {
+            subtotal = subtotal - (subtotal * discountApplied);
+        }
+
+        const total = subtotal + parseInt(shipping);
+        document.getElementById('total-price').innerText = total.toFixed(2);
+    }
+
+    function processPayment() {
+        const email = document.getElementById('email').value;
+        if (!email.includes('@')) {
+            document.getElementById('error-email').style.display = 'block';
+        } else {
+            document.getElementById('pay-btn').style.display = 'none';
+            document.getElementById('success-msg').style.display = 'block';
+        }
+    }
+</script>
+</body>
+</html>
